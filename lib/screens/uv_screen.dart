@@ -172,8 +172,6 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
               icon: Icons.logout,
               onTap: () => _handleLogout(context),
             ),
-            const SizedBox(width: 10),
-            _circleIconButton(icon: Icons.menu, onTap: () {}),
           ],
         ),
       ],
