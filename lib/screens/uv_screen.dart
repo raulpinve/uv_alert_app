@@ -310,7 +310,21 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                   ),
                 ),
                 Text(
-                  '${_weekday(hora.weekday)}, ${hora.day} ${_month(hora.month)} · ${_formatHour(hora)}',
+                  '${_weekday(hora.weekday)}, ${hora.day} ${_month(hora.month)}',
+                  style: TextStyle(
+                    color: secondaryTextColor,
+                    fontSize: 14,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Actualizado a las ${_formatHour(hora)}',
                   style: TextStyle(
                     color: secondaryTextColor,
                     fontSize: 14,
