@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/widgets/uv_screen_skeleton.dart';
 import 'package:app/models/uv.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:app/services/device_service.dart';
@@ -80,7 +81,13 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     setState(() {
       _future = _initialize();
     });
-    await _future;
+    try {
+      await _future;
+    } catch (_) {
+      // No hacemos nada aquí: el FutureBuilder ya se encarga de mostrar
+      // _buildErrorState con el error. Solo evitamos que la excepción
+      // suba sin capturar hacia RefreshIndicator / el botón Reintentar.
+    }
   }
 
   /// Mapea el valor UV a un color, siguiendo la escala estándar de la OMS.
@@ -109,29 +116,11 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
           future: _future,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return UvScreenSkeleton();
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 40,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 12),
-                    Text('${snapshot.error}'),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: _reload,
-                      child: const Text('Reintentar'),
-                    ),
-                  ],
-                ),
-              );
+              return _buildErrorState(context, snapshot.error);
             }
 
             final data = snapshot.data!.data;
@@ -617,6 +606,105 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     );
   }
 
+  Widget _buildErrorState(BuildContext context, Object? error) {
+    final info = _friendlyError(error);
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                color: info.color.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(info.icon, size: 40, color: info.color),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              info.title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              info.message,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _reload,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Reintentar'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Traduce excepciones técnicas (Firebase, ubicación, red, etc.)
+  /// a un mensaje entendible para el usuario final.
+  _ErrorInfo _friendlyError(Object? error) {
+    final text = error.toString().toLowerCase();
+
+    if (text.contains('location') ||
+        text.contains('ubicaci') ||
+        text.contains('permission')) {
+      return _ErrorInfo(
+        icon: Icons.location_off_outlined,
+        color: Colors.orange,
+        title: 'Necesitamos tu ubicación',
+        message: 'Activa el permiso de ubicación para poder mostrarte el índice UV de tu zona.',
+      );
+    }
+
+    if (text.contains('socket') ||
+        text.contains('network') ||
+        text.contains('timeout') ||
+        text.contains('connection')) {
+      return _ErrorInfo(
+        icon: Icons.wifi_off_outlined,
+        color: Colors.blueGrey,
+        title: 'Sin conexión',
+        message: 'Revisa tu conexión a internet e inténtalo de nuevo.',
+      );
+    }
+
+    if (text.contains('firebase') ||
+        text.contains('fcm') ||
+        text.contains('token')) {
+      return _ErrorInfo(
+        icon: Icons.notifications_off_outlined,
+        color: Colors.purple,
+        title: 'No pudimos conectar tus notificaciones',
+        message:
+            'Ocurrió un problema al preparar tu dispositivo. Intenta de nuevo.',
+      );
+    }
+
+    return _ErrorInfo(
+      icon: Icons.error_outline,
+      color: Colors.redAccent,
+      title: 'Algo salió mal',
+      message: 'No pudimos cargar el índice UV en este momento.',
+    );
+  }
+
   String _saludo(int hour) {
     if (hour < 12) return 'Buenos días';
     if (hour < 19) return 'Buenas tardes';
@@ -732,7 +820,16 @@ class _HourTile extends StatelessWidget {
   }
 }
 
-// --------------------------------------------------------------------------
-// Uso: UvIndexScreen(fcmToken: 'fcm-token-prueba-123457')
-// No olvides agregar http: ^1.2.0 en pubspec.yaml
-// --------------------------------------------------------------------------
+class _ErrorInfo {
+  const _ErrorInfo({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.message,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String message;
+}
