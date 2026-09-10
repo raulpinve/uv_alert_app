@@ -1,4 +1,3 @@
-import 'package:app/config/api_config.dart';
 import 'package:app/services/device_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,8 +30,6 @@ class AuthService {
 
       final userCredential = await _auth.signInWithCredential(credential);
 
-      await sincronizarUsuario();
-
       return userCredential;
     } on FirebaseAuthException catch (e) {
       debugPrint('Error de FirebaseAuth: ${e.message}');
@@ -48,8 +45,6 @@ class AuthService {
       password: password,
     );
 
-    await sincronizarUsuario();
-
     return credential;
   }
 
@@ -61,8 +56,6 @@ class AuthService {
       email: email.trim(),
       password: password,
     );
-
-    await sincronizarUsuario();
 
     return credential;
   }
@@ -80,30 +73,5 @@ class AuthService {
 
     await _googleSignIn.signOut();
     await _auth.signOut();
-  }
-
-  Future<void> sincronizarUsuario() async {
-    final user = _auth.currentUser;
-
-    if (user == null) {
-      throw Exception('No hay un usuario autenticado.');
-    }
-
-    final idToken = await user.getIdToken();
-
-    final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/usuarios'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $idToken',
-      },
-    );
-
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception(
-        'Error al sincronizar usuario '
-        '(status ${response.statusCode}): ${response.body}',
-      );
-    }
   }
 }
