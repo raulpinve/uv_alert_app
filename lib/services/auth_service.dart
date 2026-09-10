@@ -1,6 +1,7 @@
 import 'package:app/config/api_config.dart';
 import 'package:app/services/device_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,10 +35,9 @@ class AuthService {
 
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      print('Error de FirebaseAuth: ${e.message}');
+      debugPrint('Error de FirebaseAuth: ${e.message}');
       rethrow;
     } catch (e) {
-      print('Error inesperado: $e');
       rethrow;
     }
   }
@@ -75,7 +75,7 @@ class AuthService {
     try {
       await DeviceService().desregistrarDispositivo();
     } catch (e) {
-      print('Error al desregistrar dispositivo: $e');
+      debugPrint('Error al desregistrar dispositivo: $e');
     }
 
     await _googleSignIn.signOut();

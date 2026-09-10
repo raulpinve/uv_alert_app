@@ -1,5 +1,3 @@
-/// Modelos para parsear la respuesta de GET /uv?fcm_token=...
-
 class UvResponse {
   UvResponse({
     required this.success,

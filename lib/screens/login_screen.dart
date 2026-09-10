@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.orange.withOpacity(0.4),
+                color: Colors.orange.withValues(alpha: 0.4),
                 blurRadius: 30,
                 spreadRadius: 4,
               ),
@@ -173,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
         const SizedBox(height: 4),
         Text(
           'Cuida tu piel, conoce el índice UV',
-          style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.85)),
+          style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.85)),
         ),
       ],
     );
@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
@@ -431,7 +431,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(opacity),
+        color: Colors.white.withValues(alpha: opacity),
         borderRadius: BorderRadius.circular(height),
       ),
     );

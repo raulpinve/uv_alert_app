@@ -132,9 +132,9 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: uvColor.withOpacity(0.10),
+        color: uvColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: uvColor.withOpacity(0.25)),
+        border: Border.all(color: uvColor.withValues(alpha: 0.25)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +142,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: uvColor.withOpacity(0.15),
+              color: uvColor.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.wb_sunny_outlined, color: uvColor, size: 20),
@@ -157,7 +157,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: uvColor.withOpacity(0.9),
+                    color: uvColor.withValues(alpha: 0.9),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -182,7 +182,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
           future: _future,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return UvScreenSkeleton();
+              return const UvScreenSkeleton();
             }
 
             if (snapshot.hasError) {
@@ -247,7 +247,10 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
           color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+            ),
           ],
         ),
         child: Icon(icon, size: 20),
@@ -298,7 +301,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
 
     final primaryTextColor = isDay ? Colors.grey.shade800 : Colors.white;
     final secondaryTextColor = isDay
-        ? Colors.white.withOpacity(0.9)
+        ? Colors.white.withValues(alpha: 0.9)
         : Colors.grey.shade400;
 
     return ClipRRect(
@@ -333,13 +336,13 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            uvColor.withOpacity(0.95),
-                            uvColor.withOpacity(0.5),
+                            uvColor.withValues(alpha: 0.95),
+                            uvColor.withValues(alpha: 0.5),
                           ],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: uvColor.withOpacity(0.35),
+                            color: uvColor.withValues(alpha: 0.35),
                             blurRadius: 50,
                             spreadRadius: 12,
                           ),
@@ -359,7 +362,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                     fontWeight: FontWeight.w500,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withOpacity(0.15),
+                        color: Colors.black.withValues(alpha: 0.15),
                         blurRadius: 4,
                       ),
                     ],
@@ -372,7 +375,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                     fontSize: 14,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withOpacity(0.15),
+                        color: Colors.black.withValues(alpha: 0.15),
                         blurRadius: 4,
                       ),
                     ],
@@ -386,7 +389,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                     fontSize: 14,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withOpacity(0.15),
+                        color: Colors.black.withValues(alpha: 0.15),
                         blurRadius: 4,
                       ),
                     ],
@@ -442,11 +445,14 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
-          colors: [Colors.grey.shade300, Colors.grey.shade500.withOpacity(0.6)],
+          colors: [
+            Colors.grey.shade300,
+            Colors.grey.shade500.withValues(alpha: 0.6),
+          ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             blurRadius: 40,
             spreadRadius: 10,
           ),
@@ -468,7 +474,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.grey.shade600.withOpacity(0.3),
+        color: Colors.grey.shade600.withValues(alpha: 0.3),
       ),
     );
   }
@@ -505,7 +511,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(opacity),
+        color: Colors.white.withValues(alpha: opacity),
         borderRadius: BorderRadius.circular(height),
       ),
     );
@@ -534,7 +540,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
               height: 3,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
               ),
             ),
           ),
@@ -554,8 +560,8 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     if (diff < 0.5) return const SizedBox.shrink();
 
     final bgColor = isDay
-        ? Colors.white.withOpacity(0.6)
-        : Colors.white.withOpacity(0.12);
+        ? Colors.white.withValues(alpha: 0.6)
+        : Colors.white.withValues(alpha: 0.12);
     final textColor = isDay ? Colors.grey.shade600 : Colors.grey.shade300;
 
     return Padding(
@@ -604,7 +610,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -686,7 +692,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
               width: 88,
               height: 88,
               decoration: BoxDecoration(
-                color: info.color.withOpacity(0.12),
+                color: info.color.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(info.icon, size: 40, color: info.color),
@@ -733,7 +739,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     if (text.contains('location') ||
         text.contains('ubicaci') ||
         text.contains('permission')) {
-      return _ErrorInfo(
+      return const _ErrorInfo(
         icon: Icons.location_off_outlined,
         color: Colors.orange,
         title: 'Necesitamos tu ubicación',
@@ -745,7 +751,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
         text.contains('network') ||
         text.contains('timeout') ||
         text.contains('connection')) {
-      return _ErrorInfo(
+      return const _ErrorInfo(
         icon: Icons.wifi_off_outlined,
         color: Colors.blueGrey,
         title: 'Sin conexión',
@@ -756,7 +762,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     if (text.contains('firebase') ||
         text.contains('fcm') ||
         text.contains('token')) {
-      return _ErrorInfo(
+      return const _ErrorInfo(
         icon: Icons.notifications_off_outlined,
         color: Colors.purple,
         title: 'No pudimos conectar tus notificaciones',
@@ -765,7 +771,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
       );
     }
 
-    return _ErrorInfo(
+    return const _ErrorInfo(
       icon: Icons.error_outline,
       color: Colors.redAccent,
       title: 'Algo salió mal',
@@ -865,7 +871,7 @@ class _HourTile extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: uvColor.withOpacity(0.15),
+              color: uvColor.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.wb_sunny, color: uvColor, size: 20),
