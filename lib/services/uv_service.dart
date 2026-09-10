@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app/config/api_config.dart';
 import 'package:app/models/uv.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class UvService {
@@ -10,10 +11,23 @@ class UvService {
   final String baseUrl;
 
   Future<UvResponse> fetchUv({required String fcmToken}) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception('No hay un usuario autenticado.');
+    }
+
+    final idToken = await user.getIdToken();
+
     final uri = Uri.parse('$baseUrl/uv')
         .replace(queryParameters: {'fcm_token': fcmToken});
 
-    final response = await http.get(uri);
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $idToken', // <-- faltaba esto
+      },
+    );
 
     if (response.statusCode != 200) {
       throw Exception(

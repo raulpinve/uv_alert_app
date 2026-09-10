@@ -20,27 +20,50 @@ class UvResponse {
   }
 }
 
+class Recomendacion {
+  final int rangoUvId;
+  final String nombre;
+  final String mensaje;
+
+  Recomendacion({
+    required this.rangoUvId,
+    required this.nombre,
+    required this.mensaje,
+  });
+
+  factory Recomendacion.fromJson(Map<String, dynamic> json) {
+    return Recomendacion(
+      rangoUvId: json['rango_uv_id'] as int,
+      nombre: json['nombre'] as String,
+      mensaje: json['mensaje'] as String,
+    );
+  }
+}
+
 class UvData {
   UvData({
     required this.ciudad,
     required this.actual,
     required this.proyeccion,
     required this.timezone,
+    this.recomendacion,
   });
 
   final String ciudad;
   final UvActual actual;
   final UvProyeccion proyeccion;
   final String timezone;
+  final Recomendacion? recomendacion;
 
   factory UvData.fromJson(Map<String, dynamic> json) {
     return UvData(
       ciudad: json['ciudad'] as String,
-      actual: UvActual.fromJson(json['actual'] as Map<String, dynamic>),
-      proyeccion: UvProyeccion.fromJson(
-        json['proyeccion'] as Map<String, dynamic>,
-      ),
+      actual: UvActual.fromJson(json['actual']),
+      proyeccion: UvProyeccion.fromJson(json['proyeccion']),
       timezone: json['timezone'] as String,
+      recomendacion: json['recomendacion'] != null
+          ? Recomendacion.fromJson(json['recomendacion'])
+          : null,
     );
   }
 }

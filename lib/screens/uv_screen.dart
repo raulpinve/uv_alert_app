@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/services/usuario_service.dart';
 import 'package:app/widgets/uv_screen_skeleton.dart';
 import 'package:app/models/uv.dart';
 import 'package:app/services/auth_service.dart';
@@ -24,6 +25,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
   final _locationService = LocationService();
   late Future<UvResponse> _future;
   StreamSubscription<String>? _tokenRefreshSub;
+  final _usuarioService = UsuarioService();
 
   @override
   void initState() {
@@ -66,6 +68,8 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
       throw Exception('No se pudo obtener el token de notificaciones.');
     }
 
+    await _usuarioService.registrarUsuario();
+
     final position = await _locationService.getCurrentPosition();
 
     await _deviceService.registrarDispositivo(
@@ -107,6 +111,58 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     return 'Extremo';
   }
 
+  Widget _buildRecomendacionCard(UvData data) {
+    final recomendacion = data.recomendacion;
+    if (recomendacion == null) return const SizedBox.shrink();
+
+    final uvColor = colorForUv(data.actual.uv);
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: uvColor.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: uvColor.withOpacity(0.25)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: uvColor.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.wb_sunny_outlined, color: uvColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Recomendación · ${recomendacion.nombre}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: uvColor.withOpacity(0.9),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  recomendacion.mensaje,
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,6 +195,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                     const SizedBox(height: 20),
                     _buildStatsRow(data),
                     const SizedBox(height: 20),
+                    _buildRecomendacionCard(data),
                     _buildHourlySection(data),
                   ],
                 ),
@@ -660,6 +717,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
   /// Traduce excepciones técnicas (Firebase, ubicación, red, etc.)
   /// a un mensaje entendible para el usuario final.
   _ErrorInfo _friendlyError(Object? error) {
+    debugPrint('🔴 Error real en UvIndexScreen: $error');
     final text = error.toString().toLowerCase();
 
     if (text.contains('location') ||
