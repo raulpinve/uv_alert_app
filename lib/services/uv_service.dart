@@ -24,9 +24,7 @@ class UvService {
 
     final response = await http.get(
       uri,
-      headers: {
-        'Authorization': 'Bearer $idToken', // <-- faltaba esto
-      },
+      headers: {'Authorization': 'Bearer $idToken'},
     );
 
     if (response.statusCode != 200) {

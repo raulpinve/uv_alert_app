@@ -94,6 +94,15 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     }
   }
 
+  /// Formatea el valor UV: sin decimales si es un número entero (ej. "0",
+  /// "5"), con un decimal si no lo es (ej. "6.9").
+  static String formatUv(double uv) {
+    if (uv == uv.roundToDouble()) {
+      return uv.toStringAsFixed(0);
+    }
+    return uv.toStringAsFixed(1);
+  }
+
   /// Mapea el valor UV a un color, siguiendo la escala estándar de la OMS.
   static Color colorForUv(double uv) {
     if (uv <= 2) return const Color(0xFF4CAF50); // Bajo - verde
@@ -104,6 +113,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
   }
 
   static String labelForUv(double uv) {
+    if (uv < 0.5) return 'Sin UV';
     if (uv <= 2) return 'Bajo';
     if (uv <= 5) return 'Moderado';
     if (uv <= 7) return 'Alto';
@@ -396,7 +406,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        data.actual.uv.toStringAsFixed(1),
+                        formatUv(data.actual.uv),
                         style: TextStyle(
                           fontSize: 72,
                           fontWeight: FontWeight.bold,
@@ -564,7 +574,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
             Flexible(
               child: Text(
                 'Este es el UV actual (parcialmente nublado). '
-                'Con cielo despejado sería ${clearSky.toStringAsFixed(1)} '
+                'Con cielo despejado sería ${formatUv(clearSky)} '
                 '(${labelForUv(clearSky)}).',
                 style: TextStyle(fontSize: 11, color: textColor),
                 textAlign: TextAlign.center,
@@ -611,7 +621,7 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
             _StatItem(
               icon: Icons.wb_cloudy_outlined,
               label: 'Cielo despejado',
-              value: clearSky.toStringAsFixed(1),
+              value: formatUv(clearSky),
             ),
             _StatItem(
               icon: Icons.cloud_outlined,
@@ -862,7 +872,7 @@ class _HourTile extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           Text(
-            point.uv.toStringAsFixed(1),
+            _UvIndexScreenState.formatUv(point.uv),
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(width: 16),
