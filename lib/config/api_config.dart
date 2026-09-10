@@ -7,13 +7,13 @@ class ApiConfig {
     if (Platform.isAndroid) {
       // El emulador de Android no ve "localhost" como tu PC, sino como
       // él mismo. 10.0.2.2 es la IP especial que sí apunta al host.
-      // return 'https://uv.gestorempresarial.cloud';
+      return 'https://uv.gestorempresarial.cloud';
 
-      return 'http://10.0.2.2:3000';
+      // return 'http://10.0.2.2:3000';
     }
-    // return 'https://uv.gestorempresarial.cloud'; // iOS simulator / desktop
+    return 'https://uv.gestorempresarial.cloud'; // iOS simulator / desktop
 
-    return 'http://localhost:3000';
+    // return 'http://localhost:3000';
 
     // Si pruebas en un dispositivo físico, reemplaza temporalmente por
     // la IP local de tu PC en la red, ej: 'http://192.168.1.15:3000'

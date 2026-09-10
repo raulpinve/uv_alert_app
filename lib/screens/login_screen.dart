@@ -62,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       // No necesitas navegar manualmente: el AuthGate reacciona solo
     } on FirebaseAuthException catch (e) {
+      print(e);
       if (mounted) {
         _showError(_mapFirebaseError(e.code));
       }
@@ -173,7 +174,10 @@ class _LoginScreenState extends State<LoginScreen> {
         const SizedBox(height: 4),
         Text(
           'Cuida tu piel, conoce el índice UV',
-          style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.85)),
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.white.withValues(alpha: 0.85),
+          ),
         ),
       ],
     );

@@ -25,7 +25,6 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
   final _locationService = LocationService();
   late Future<UvResponse> _future;
   StreamSubscription<String>? _tokenRefreshSub;
-  final _usuarioService = UsuarioService();
 
   @override
   void initState() {
@@ -67,8 +66,6 @@ class _UvIndexScreenState extends State<UvIndexScreen> {
     if (token == null) {
       throw Exception('No se pudo obtener el token de notificaciones.');
     }
-
-    await _usuarioService.registrarUsuario();
 
     final position = await _locationService.getCurrentPosition();
 
