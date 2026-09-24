@@ -18,7 +18,7 @@ class AuthGate extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          return const UvIndexScreen();
+          return const UvScreen();
         }
 
         return const LoginScreen();

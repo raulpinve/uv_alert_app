@@ -15,7 +15,7 @@ class DeviceService {
     required double latitud,
     required double longitud,
   }) async {
-    final uri = Uri.parse('$baseUrl/dispositivos');
+    final uri = Uri.parse('$baseUrl/devices');
 
     final user = FirebaseAuth.instance.currentUser;
 
@@ -32,9 +32,9 @@ class DeviceService {
         'Authorization': 'Bearer $idToken',
       },
       body: jsonEncode({
-        'fcm_token': fcmToken,
-        'latitud': latitud,
-        'longitud': longitud,
+        'fcmToken': fcmToken,
+        'latitude': latitud,
+        'longitude': longitud,
       }),
     );
 
@@ -62,12 +62,12 @@ class DeviceService {
     final idToken = await user.getIdToken();
 
     final response = await http.delete(
-      Uri.parse('$baseUrl/dispositivos'),
+      Uri.parse('$baseUrl/devices'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $idToken',
       },
-      body: jsonEncode({'fcm_token': fcmToken}),
+      body: jsonEncode({'fcmToken': fcmToken}),
     );
 
     if (response.statusCode != 200) {

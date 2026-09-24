@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:app/config/api_config.dart';
 import 'package:app/models/uv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 
 class UvService {
@@ -20,7 +21,7 @@ class UvService {
     final idToken = await user.getIdToken();
 
     final uri = Uri.parse('$baseUrl/uv')
-        .replace(queryParameters: {'fcm_token': fcmToken});
+        .replace(queryParameters: {'fcmToken': fcmToken});
 
     final response = await http.get(
       uri,
@@ -34,6 +35,7 @@ class UvService {
     }
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
+    debugPrint(response.body);
     final parsed = UvResponse.fromJson(json);
 
     if (!parsed.success) {
