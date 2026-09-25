@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       // No necesitas navegar manualmente: el AuthGate reacciona solo
     } on FirebaseAuthException catch (e) {
-      print(e);
+      debugPrint(e.toString());
       if (mounted) {
         _showError(_mapFirebaseError(e.code));
       }

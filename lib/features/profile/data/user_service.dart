@@ -1,7 +1,3 @@
-// lib/services/user_service.dart
-//
-// OJO: los endpoints (/users/me) y los nombres de campos son SUPUESTOS.
-// Ajústalos a lo que exponga tu backend.
 import 'dart:convert';
 
 import 'package:app/core/config/api_config.dart';

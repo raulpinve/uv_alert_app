@@ -1,10 +1,8 @@
-// lib/screens/skin_type_picker_screen.dart
-import 'package:app/features/uv/presentation/screens/uv_screen.dart' show gradientForUv;
+import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:flutter/material.dart';
 
 // ───────────────────────── Datos ─────────────────────────
-// Los ids (1–6) son SUPUESTOS: deben coincidir con los skinTypeId de tu backend.
-
+// Los ids (1–6) son SUPUESTOS: deben coincidir con los skinTypeId del backend.
 class SkinType {
   const SkinType(this.id, this.name, this.description, this.color);
 
@@ -208,7 +206,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
                 'Elige según el tono de tu piel sin exposición al sol. '
                 'Lo usamos para calcular en cuántos minutos podrías quemarte.',
                 style: TextStyle(
-                  color: _ink.withOpacity(0.75),
+                  color: _ink.withValues(alpha: 0.75),
                   fontSize: 13,
                   height: 1.35,
                 ),
@@ -218,7 +216,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -287,7 +285,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
         width: width,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(selected ? 0.92 : 0.6),
+          color: Colors.white.withValues(alpha: selected ? 0.92 : 0.6),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected ? _ink : Colors.transparent,
@@ -306,7 +304,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withValues(alpha: 0.15),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -327,7 +325,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
             Text(
               t.description,
               style: TextStyle(
-                color: _ink.withOpacity(0.7),
+                color: _ink.withValues(alpha: 0.7),
                 fontSize: 12,
                 height: 1.3,
               ),
@@ -348,7 +346,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
       children: [
         Text(
           'Pregunta ${_step + 1} de ${_questions.length}',
-          style: TextStyle(color: _ink.withOpacity(0.7), fontSize: 13),
+          style: TextStyle(color: _ink.withValues(alpha: 0.7), fontSize: 13),
         ),
         const SizedBox(height: 8),
         ClipRRect(
@@ -356,7 +354,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
           child: LinearProgressIndicator(
             value: (_step + 1) / _questions.length,
             minHeight: 6,
-            backgroundColor: Colors.white.withOpacity(0.5),
+            backgroundColor: Colors.white.withValues(alpha: 0.5),
           ),
         ),
         const SizedBox(height: 24),
@@ -373,7 +371,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: Material(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(16),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),

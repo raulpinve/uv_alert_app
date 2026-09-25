@@ -1,7 +1,7 @@
 // lib/screens/profile_screen.dart
 import 'package:app/features/profile/presentation/screens/skin_type_picker_screen.dart';
 import 'package:app/features/profile/data/user_service.dart';
-import 'package:app/features/uv/presentation/screens/uv_screen.dart' show gradientForUv;
+import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -195,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Center(
           child: CircleAvatar(
             radius: 42,
-            backgroundColor: Colors.white.withOpacity(0.65),
+            backgroundColor: Colors.white.withValues(alpha: 0.65),
             child: Text(
               initial,
               style: const TextStyle(
@@ -220,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Center(
           child: Text(
             profile.email,
-            style: TextStyle(color: _ink.withOpacity(0.7), fontSize: 13),
+            style: TextStyle(color: _ink.withValues(alpha: 0.7), fontSize: 13),
           ),
         ),
         const SizedBox(height: 24),
@@ -243,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
+                      color: Colors.black.withValues(alpha: 0.15),
                       blurRadius: 4,
                     ),
                   ],
@@ -266,7 +266,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: OutlinedButton.styleFrom(
             foregroundColor: const Color(0xFFA92B2B),
             minimumSize: const Size.fromHeight(50),
-            side: BorderSide(color: const Color(0xFFA92B2B).withOpacity(0.5)),
+            side: BorderSide(
+              color: const Color(0xFFA92B2B).withValues(alpha: 0.5),
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -285,7 +287,7 @@ class _Section extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.72),
+        color: Colors.white.withValues(alpha: 0.72),
         borderRadius: BorderRadius.circular(22),
       ),
       clipBehavior: Clip.antiAlias,
@@ -324,7 +326,7 @@ class _Tile extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      color: ink.withOpacity(0.65),
+                      color: ink.withValues(alpha: 0.65),
                       fontSize: 12,
                     ),
                   ),
@@ -340,7 +342,7 @@ class _Tile extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: ink.withOpacity(0.5)),
+            Icon(Icons.chevron_right, color: ink.withValues(alpha: 0.5)),
           ],
         ),
       ),
