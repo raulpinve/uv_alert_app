@@ -31,14 +31,12 @@ class UvHeader extends StatelessWidget {
     super.key,
     required this.data,
     required this.fg,
-    required this.onRefresh,
     required this.dark,
     required this.onProfile,
   });
 
   final UvData data;
   final Color fg;
-  final VoidCallback onRefresh;
   final bool dark;
   final VoidCallback onProfile;
 
@@ -85,16 +83,16 @@ class UvHeader extends StatelessWidget {
             ],
           ),
         ),
-        InkWell(
-          onTap: onRefresh,
-          customBorder: const CircleBorder(),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(color: box, shape: BoxShape.circle),
-            child: Icon(Icons.refresh, color: fg, size: 20),
-          ),
-        ),
+        // InkWell(
+        //   onTap: onRefresh,
+        //   customBorder: const CircleBorder(),
+        //   child: Container(
+        //     width: 40,
+        //     height: 40,
+        //     decoration: BoxDecoration(color: box, shape: BoxShape.circle),
+        //     child: Icon(Icons.refresh, color: fg, size: 20),
+        //   ),
+        // ),
         const SizedBox(width: 8),
         InkWell(
           onTap: onProfile,

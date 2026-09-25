@@ -120,7 +120,6 @@ class _UvScreenState extends State<UvScreen> {
                         data: data,
                         fg: fg,
                         dark: dark,
-                        onRefresh: _load,
                         onProfile: () async {
                           final changed = await Navigator.push<bool>(
                             context,
