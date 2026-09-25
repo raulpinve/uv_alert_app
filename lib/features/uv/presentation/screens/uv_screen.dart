@@ -1,4 +1,7 @@
 // lib/features/uv/presentation/screens/uv_screen.dart
+import 'dart:async';
+import 'dart:io';
+
 import 'package:app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:app/features/uv/data/uv.dart';
 import 'package:app/features/uv/data/uv_service.dart';
@@ -11,6 +14,7 @@ import 'package:app/features/uv/presentation/widgets/uv_level_chip.dart';
 import 'package:app/features/uv/presentation/widgets/uv_ring.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class UvScreen extends StatefulWidget {
   const UvScreen({super.key});
@@ -32,7 +36,6 @@ class _UvScreenState extends State<UvScreen> {
   }
 
   Future<void> _load() async {
-    debugPrint('[${DateTime.now()}] UvScreen pidiendo fetch de UV');
     setState(() {
       _loading = true;
       _error = null;
@@ -48,10 +51,28 @@ class _UvScreenState extends State<UvScreen> {
       setState(() => _data = res.data);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error = e.toString());
+      setState(() => _error = _mensajeAmigable(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  String _mensajeAmigable(Object e) {
+    if (e is SocketException) {
+      return 'No se pudo conectar con el servidor. Verifica tu conexión.';
+    }
+    if (e is http.ClientException) {
+      return 'No se pudo conectar con el servidor. Intenta de nuevo.';
+    }
+    if (e is TimeoutException) {
+      return 'La conexión tardó demasiado. Intenta de nuevo.';
+    }
+    // Mensajes que tú mismo lanzaste con Exception('texto') en UvService
+    if (e is Exception) {
+      final msg = e.toString().replaceFirst('Exception: ', '');
+      return msg;
+    }
+    return 'Ocurrió un error inesperado. Intenta de nuevo.';
   }
 
   @override
