@@ -4,7 +4,7 @@
 // Ajústalos a lo que exponga tu backend.
 import 'dart:convert';
 
-import 'package:app/config/api_config.dart';
+import 'package:app/core/config/api_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 

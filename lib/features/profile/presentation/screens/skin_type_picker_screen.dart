@@ -1,5 +1,5 @@
 // lib/screens/skin_type_picker_screen.dart
-import 'package:app/screens/uv_screen.dart' show gradientForUv;
+import 'package:app/features/uv/presentation/screens/uv_screen.dart' show gradientForUv;
 import 'package:flutter/material.dart';
 
 // ───────────────────────── Datos ─────────────────────────

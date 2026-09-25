@@ -1,5 +1,5 @@
-import 'package:app/services/device_service.dart';
-import 'package:app/services/notification_service.dart';
+import 'package:app/features/device/data/device_service.dart';
+import 'package:app/core/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';

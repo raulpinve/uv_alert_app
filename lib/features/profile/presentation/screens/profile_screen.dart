@@ -1,7 +1,7 @@
 // lib/screens/profile_screen.dart
-import 'package:app/screens/skin_type_picker_screen.dart';
-import 'package:app/screens/user_service.dart';
-import 'package:app/screens/uv_screen.dart' show gradientForUv;
+import 'package:app/features/profile/presentation/screens/skin_type_picker_screen.dart';
+import 'package:app/features/profile/data/user_service.dart';
+import 'package:app/features/uv/presentation/screens/uv_screen.dart' show gradientForUv;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

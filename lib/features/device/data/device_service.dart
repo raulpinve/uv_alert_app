@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:app/config/api_config.dart';
-import 'package:app/services/notification_service.dart';
+import 'package:app/core/config/api_config.dart';
+import 'package:app/core/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 

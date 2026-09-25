@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:app/config/api_config.dart';
-import 'package:app/models/uv.dart';
+import 'package:app/core/config/api_config.dart';
+import 'package:app/features/uv/data/uv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;

@@ -1,9 +1,9 @@
 // lib/screens/uv_screen.dart
 import 'dart:math' as math;
 
-import 'package:app/models/uv.dart';
-import 'package:app/screens/profile_screen.dart';
-import 'package:app/services/uv_service.dart';
+import 'package:app/features/uv/data/uv.dart';
+import 'package:app/features/profile/presentation/screens/profile_screen.dart';
+import 'package:app/features/uv/data/uv_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
