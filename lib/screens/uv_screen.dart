@@ -2,6 +2,7 @@
 import 'dart:math' as math;
 
 import 'package:app/models/uv.dart';
+import 'package:app/screens/profile_screen.dart';
 import 'package:app/services/uv_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -104,6 +105,7 @@ class _UvScreenState extends State<UvScreen> {
   }
 
   Future<void> _load() async {
+    debugPrint('[${DateTime.now()}] UvScreen pidiendo fetch de UV');
     setState(() {
       _loading = true;
       _error = null;
@@ -166,7 +168,22 @@ class _UvScreenState extends State<UvScreen> {
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                     children: [
-                      _Header(data: data, fg: fg, onRefresh: _load, dark: dark),
+                      _Header(
+                        data: data,
+                        fg: fg,
+                        dark: dark,
+                        onRefresh: _load,
+                        onProfile: () async {
+                          final changed = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ProfileScreen(),
+                            ),
+                          );
+                          if (changed == true)
+                            _load(); // recalcula los minutos de exposición
+                        },
+                      ),
                       const SizedBox(height: 20),
                       _UvRing(uv: uv, fg: fg, dark: dark),
                       const SizedBox(height: 16),
@@ -245,12 +262,14 @@ class _Header extends StatelessWidget {
     required this.fg,
     required this.onRefresh,
     required this.dark,
+    required this.onProfile,
   });
 
   final UvData data;
   final Color fg;
   final VoidCallback onRefresh;
   final bool dark;
+  final VoidCallback onProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -300,6 +319,17 @@ class _Header extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(color: box, shape: BoxShape.circle),
             child: Icon(Icons.refresh, color: fg, size: 20),
+          ),
+        ),
+        const SizedBox(width: 8),
+        InkWell(
+          onTap: onProfile,
+          customBorder: const CircleBorder(),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(color: box, shape: BoxShape.circle),
+            child: Icon(Icons.person_outline, color: fg, size: 20),
           ),
         ),
       ],
