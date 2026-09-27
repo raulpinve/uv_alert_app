@@ -217,13 +217,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: Row(
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: _ink),
-                        onPressed: () => Navigator.pop(context, _changed),
+                      InkWell(
+                        onTap: () => Navigator.pop(context, _changed),
+                        customBorder: const CircleBorder(),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.55),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back,
+                            color: _ink,
+                            size: 20,
+                          ),
+                        ),
                       ),
+                      const SizedBox(width: 12),
                       const Text(
                         'Perfil',
                         style: TextStyle(
