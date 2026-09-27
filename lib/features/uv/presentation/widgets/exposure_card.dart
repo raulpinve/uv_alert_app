@@ -17,6 +17,13 @@ class ExposureCard extends StatelessWidget {
   final double uv;
   final Color fg, bg;
 
+  String formatExposureMinutes(int minutes) {
+    if (minutes < 60) return '$minutes min';
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    return mins == 0 ? '${hours}h' : '${hours}h ${mins}min';
+  }
+
   @override
   Widget build(BuildContext context) {
     final exposure = data.exposure;
@@ -32,7 +39,7 @@ class ExposureCard extends StatelessWidget {
       title: exposure.skinTypeName,
       body: exposure.message,
       trailing: Text(
-        minutes == null ? '—' : '$minutes min',
+        minutes == null ? '—' : formatExposureMinutes(minutes),
         style: TextStyle(
           color: minutes == null
               ? fg.withValues(alpha: 0.6)
