@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-  bool _isRegistering = false; // toggle entre login y crear cuenta
+  bool _isRegistering = false;
   bool _obscurePassword = true;
 
   @override
@@ -60,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
           _passwordController.text,
         );
       }
-      // No necesitas navegar manualmente: el AuthGate reacciona solo
     } on FirebaseAuthException catch (e) {
       debugPrint(e.toString());
       if (mounted) {
@@ -88,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: const Color(0xFF37474F),
+        backgroundColor: const Color(0xFF1B2F5E), // azul oscuro, no gris
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -97,14 +96,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F7),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF039BE5), Color(0xFF4FC3F7), Color(0xFF8FD8F8)],
+            colors: [
+              primary,
+              Color.lerp(primary, Colors.white, 0.35)!,
+              Color.lerp(primary, Colors.white, 0.65)!,
+            ],
           ),
         ),
         child: Stack(
@@ -126,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         _buildHeader(),
                         const SizedBox(height: 28),
-                        _buildFormCard(),
+                        _buildFormCard(primary),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -140,7 +145,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // --- Ícono + título de marca, arriba de la tarjeta ---
   Widget _buildHeader() {
     return Column(
       children: [
@@ -183,8 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // --- Tarjeta blanca flotante con el formulario ---
-  Widget _buildFormCard() {
+  Widget _buildFormCard(Color primary) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
@@ -220,6 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
               label: 'Correo',
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
+              focusColor: primary,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return 'Ingresa tu correo';
@@ -237,6 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
               label: 'Contraseña',
               icon: Icons.lock_outline,
               obscureText: _obscurePassword,
+              focusColor: primary,
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscurePassword
@@ -262,12 +267,12 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 24),
 
             if (_isLoading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: Center(child: CircularProgressIndicator()),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Center(child: CircularProgressIndicator(color: primary)),
               )
             else ...[
-              _buildPrimaryButton(),
+              _buildPrimaryButton(primary),
               const SizedBox(height: 12),
               Center(
                 child: TextButton(
@@ -278,8 +283,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     _isRegistering
                         ? '¿Ya tienes cuenta? Inicia sesión'
                         : '¿No tienes cuenta? Regístrate',
-                    style: const TextStyle(
-                      color: Color(0xFF0288D1),
+                    style: TextStyle(
+                      color: primary,
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
                     ),
@@ -299,6 +304,7 @@ class _LoginScreenState extends State<LoginScreen> {
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    required Color focusColor,
     TextInputType? keyboardType,
     bool obscureText = false,
     Widget? suffixIcon,
@@ -330,7 +336,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFF4FC3F7), width: 1.5),
+          borderSide: BorderSide(color: focusColor, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -340,13 +346,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPrimaryButton() {
+  Widget _buildPrimaryButton(Color primary) {
     return SizedBox(
       height: 50,
       child: ElevatedButton(
         onPressed: _handleEmailAuth,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0288D1),
+          backgroundColor: primary,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -404,8 +410,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Mismas nubes sutiles del hero card de UvIndexScreen, para
-  /// mantener consistencia visual entre pantallas.
   List<Widget> _buildClouds() {
     return [
       Positioned(

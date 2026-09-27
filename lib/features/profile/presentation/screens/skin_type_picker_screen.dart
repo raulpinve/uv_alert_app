@@ -57,19 +57,24 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: _ink),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const Text(
-                      'Tipo de piel',
-                      style: TextStyle(
-                        color: _ink,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      customBorder: const CircleBorder(),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.55),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: _ink,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ],
@@ -89,7 +94,6 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
   }
 
   // ── Vista de colores ──
-
   Widget _buildColors() {
     final width = (MediaQuery.of(context).size.width - 32 - 12) / 2;
     final suggested = skinTypeById(_suggested);
@@ -99,7 +103,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
             children: [
               const Text(
                 '¿Cuál se parece más a tu piel?',
@@ -109,7 +113,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 12),
               Text(
                 'Elige según el tono de tu piel sin exposición al sol. '
                 'Lo usamos para calcular en cuántos minutos podrías quemarte.',

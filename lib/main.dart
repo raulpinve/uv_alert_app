@@ -9,8 +9,6 @@ import 'core/routing/auth_gate.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // Debe registrarse ANTES de runApp(), y firebaseMessagingBackgroundHandler
-  // debe ser una función top-level (ver notification_service.dart).
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   await NotificationService.instance.initialize();
@@ -28,7 +26,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2F6FDB)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2F6FDB))
+            .copyWith(
+              primary: const Color(
+                0xFF2F6FDB,
+              ), // fuerza el hex exacto, sin ajustes
+            ),
       ),
       home: const AuthGate(),
     );
