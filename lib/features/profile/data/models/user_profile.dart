@@ -1,3 +1,29 @@
+class SkinType {
+  SkinType({
+    required this.id,
+    required this.scale,
+    required this.name,
+    required this.description,
+    required this.sensitivityFactor,
+  });
+
+  final int id;
+  final String scale;
+  final String name;
+  final String description;
+  final num sensitivityFactor;
+
+  factory SkinType.fromJson(Map<String, dynamic> json) {
+    return SkinType(
+      id: json['id'] as int,
+      scale: json['scale'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      sensitivityFactor: json['sensitivityFactor'] as num? ?? 0,
+    );
+  }
+}
+
 class UserProfile {
   UserProfile({
     required this.id,
@@ -5,7 +31,7 @@ class UserProfile {
     required this.firstName,
     required this.lastName,
     this.registeredAt,
-    this.skinTypeId,
+    this.skinType,
   });
 
   final int id;
@@ -13,9 +39,11 @@ class UserProfile {
   final String firstName;
   final String lastName;
   final DateTime? registeredAt;
-  final int? skinTypeId;
+  final SkinType? skinType;
 
   String get fullName => '$firstName $lastName';
+  int? get skinTypeId =>
+      skinType?.id; // para seguir mandando el id al hacer PATCH
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
@@ -26,29 +54,22 @@ class UserProfile {
       registeredAt: json['registeredAt'] != null
           ? DateTime.tryParse(json['registeredAt'] as String)
           : null,
-      skinTypeId: json['skinType'] as int?,
+      skinType: json['skinType'] != null
+          ? SkinType.fromJson(json['skinType'] as Map<String, dynamic>)
+          : null,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'firebaseUid': firebaseUid,
-    'firstName': firstName,
-    'lastName': lastName,
-    'registeredAt': registeredAt?.toIso8601String(),
-    'skinType': skinTypeId,
-  };
 
   UserProfile copyWith({
     String? firstName,
     String? lastName,
-    int? skinTypeId,
+    SkinType? skinType,
   }) => UserProfile(
     id: id,
     firebaseUid: firebaseUid,
     firstName: firstName ?? this.firstName,
     lastName: lastName ?? this.lastName,
     registeredAt: registeredAt,
-    skinTypeId: skinTypeId ?? this.skinTypeId,
+    skinType: skinType ?? this.skinType,
   );
 }

@@ -185,8 +185,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await _service.updateProfile(skinTypeId: id);
       if (!mounted) return;
+      final refreshed = await _service.fetchProfile();
+      if (!mounted) return;
       setState(() {
-        _profile = profile.copyWith(skinTypeId: id);
+        _profile = refreshed;
         _changed = true;
       });
     } catch (e) {

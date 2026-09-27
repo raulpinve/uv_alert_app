@@ -41,7 +41,7 @@ class UserService {
     final body = <String, dynamic>{
       if (firstName != null) 'firstName': firstName,
       if (lastName != null) 'lastName': lastName,
-      if (skinTypeId != null) 'skinType': skinTypeId,
+      if (skinTypeId != null) 'skinTypeId': skinTypeId,
     };
     final res = await http.patch(
       Uri.parse('$baseUrl/users/me'),
