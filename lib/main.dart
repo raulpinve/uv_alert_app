@@ -9,7 +9,6 @@ import 'core/routing/auth_gate.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   // Debe registrarse ANTES de runApp(), y firebaseMessagingBackgroundHandler
   // debe ser una función top-level (ver notification_service.dart).
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'UV ALERT',
+      title: 'Uv alert',
       debugShowCheckedModeBanner: false,
       home: AuthGate(),
     );

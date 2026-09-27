@@ -5,17 +5,22 @@ import 'dart:io' show Platform;
 class ApiConfig {
   static String get baseUrl {
     if (Platform.isAndroid) {
-      // El emulador de Android no ve "localhost" como tu PC, sino como
-      // él mismo. 10.0.2.2 es la IP especial que sí apunta al host.
+      // Emulador Android: 10.0.2.2 apunta al localhost de tu PC.
+      // return 'http://10.0.2.2:3000';
+
+      // Producción:
       // return 'https://uv.gestorempresarial.cloud';
 
-      return 'http://10.0.2.2:3000';
+      // Dispositivo Android físico:
+      return 'http://192.168.10.14:3000';
     }
-    // return 'https://uv.gestorempresarial.cloud'; // iOS simulator / desktop
+
+    // iOS Simulator / Desktop:
+    // return 'http://localhost:3000';
+
+    // Producción:
+    // return 'https://uv.gestorempresarial.cloud';
 
     return 'http://localhost:3000';
-
-    // Si pruebas en un dispositivo físico, reemplaza temporalmente por
-    // la IP local de tu PC en la red, ej: 'http://192.168.1.15:3000'
   }
 }
