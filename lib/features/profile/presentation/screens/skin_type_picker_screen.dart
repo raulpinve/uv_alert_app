@@ -1,100 +1,8 @@
+import 'package:app/features/profile/data/skin_type.dart';
+import 'package:app/features/profile/presentation/logic/skin_quiz.dart';
+import 'package:app/features/profile/presentation/widgets/skin_type_card.dart';
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:flutter/material.dart';
-
-// ───────────────────────── Datos ─────────────────────────
-// Los ids (1–6) son SUPUESTOS: deben coincidir con los skinTypeId del backend.
-class SkinType {
-  const SkinType(this.id, this.name, this.description, this.color);
-
-  final int id;
-  final String name;
-  final String description;
-  final Color color;
-}
-
-const skinTypes = <SkinType>[
-  SkinType(
-    1,
-    'Piel muy clara',
-    'Siempre se quema, nunca se broncea.',
-    Color(0xFFF8E1D4),
-  ),
-  SkinType(
-    2,
-    'Piel clara',
-    'Se quema con facilidad y se broncea poco.',
-    Color(0xFFF1CDB0),
-  ),
-  SkinType(
-    3,
-    'Piel media',
-    'A veces se quema, se broncea de forma gradual.',
-    Color(0xFFE0AC85),
-  ),
-  SkinType(
-    4,
-    'Piel morena clara',
-    'Se quema poco y se broncea fácil.',
-    Color(0xFFC68B5F),
-  ),
-  SkinType(
-    5,
-    'Piel morena',
-    'Rara vez se quema y se broncea mucho.',
-    Color(0xFF8D5A3B),
-  ),
-  SkinType(6, 'Piel oscura', 'Casi nunca se quema.', Color(0xFF4A2C1D)),
-];
-
-SkinType? skinTypeById(int? id) {
-  for (final t in skinTypes) {
-    if (t.id == id) return t;
-  }
-  return null;
-}
-
-// ───────────────────────── Test ─────────────────────────
-// Cada opción suma su índice. Total posible: 0–11.
-
-class _Question {
-  const _Question(this.text, this.options);
-  final String text;
-  final List<String> options;
-}
-
-const _questions = <_Question>[
-  _Question('¿Cómo es el color natural de tu piel, sin sol?', [
-    'Muy pálida',
-    'Clara',
-    'Media',
-    'Morena',
-    'Oscura',
-  ]),
-  _Question('Después de una hora al sol sin protección, tu piel…', [
-    'Se quema con ardor o ampollas',
-    'Se pone roja y duele',
-    'Se pone un poco roja',
-    'Casi nunca cambia',
-  ]),
-  _Question('¿Qué tanto te bronceas?', [
-    'Nunca me bronceo',
-    'Muy poco',
-    'Poco a poco',
-    'Con facilidad',
-    'Muy rápido',
-  ]),
-];
-
-int _typeForScore(int s) {
-  if (s <= 1) return 1;
-  if (s <= 3) return 2;
-  if (s <= 5) return 3;
-  if (s <= 7) return 4;
-  if (s <= 9) return 5;
-  return 6;
-}
-
-// ───────────────────────── Pantalla ─────────────────────────
 
 /// Devuelve el id del tipo de piel elegido con Navigator.pop, o null si se cancela.
 class SkinTypePickerScreen extends StatefulWidget {
@@ -127,10 +35,10 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
 
   void _answer(int index) {
     _score += index;
-    if (_step + 1 < _questions.length) {
+    if (_step + 1 < skinQuizQuestions.length) {
       setState(() => _step++);
     } else {
-      final id = _typeForScore(_score);
+      final id = skinTypeIdForScore(_score);
       setState(() {
         _selected = id;
         _suggested = id;
@@ -242,7 +150,16 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: skinTypes.map((t) => _card(t, width)).toList(),
+                children: skinTypes
+                    .map(
+                      (t) => SkinTypeCard(
+                        type: t,
+                        width: width,
+                        selected: _selected == t.id,
+                        onTap: () => setState(() => _selected = t.id),
+                      ),
+                    )
+                    .toList(),
               ),
               const SizedBox(height: 8),
               Center(
@@ -272,87 +189,23 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
     );
   }
 
-  Widget _card(SkinType t, double width) {
-    final selected = _selected == t.id;
-    final checkColor = t.color.computeLuminance() > 0.5
-        ? Colors.black87
-        : Colors.white;
-
-    return GestureDetector(
-      onTap: () => setState(() => _selected = t.id),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: width,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: selected ? 0.92 : 0.6),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? _ink : Colors.transparent,
-            width: 2,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: t.color,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: selected ? Icon(Icons.check, color: checkColor) : null,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              t.name,
-              style: const TextStyle(
-                color: _ink,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              t.description,
-              style: TextStyle(
-                color: _ink.withValues(alpha: 0.7),
-                fontSize: 12,
-                height: 1.3,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // ── Vista del test ──
 
   Widget _buildQuiz() {
-    final q = _questions[_step];
+    final q = skinQuizQuestions[_step];
     return ListView(
       key: ValueKey('quiz$_step'),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
         Text(
-          'Pregunta ${_step + 1} de ${_questions.length}',
+          'Pregunta ${_step + 1} de ${skinQuizQuestions.length}',
           style: TextStyle(color: _ink.withValues(alpha: 0.7), fontSize: 13),
         ),
         const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
-            value: (_step + 1) / _questions.length,
+            value: (_step + 1) / skinQuizQuestions.length,
             minHeight: 6,
             backgroundColor: Colors.white.withValues(alpha: 0.5),
           ),

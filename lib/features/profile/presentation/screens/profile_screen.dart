@@ -1,6 +1,9 @@
-// lib/screens/profile_screen.dart
+// lib/features/profile/presentation/screens/profile_screen.dart
+import 'package:app/features/profile/data/skin_type.dart';
 import 'package:app/features/profile/presentation/screens/skin_type_picker_screen.dart';
 import 'package:app/features/profile/data/user_service.dart';
+import 'package:app/features/profile/presentation/widgets/profile_section.dart';
+import 'package:app/features/profile/presentation/widgets/profile_tile.dart';
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -52,37 +55,116 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _editName() async {
     final profile = _profile!;
-    final controller = TextEditingController(text: profile.name);
+    final firstNameController = TextEditingController(text: profile.firstName);
+    final lastNameController = TextEditingController(text: profile.lastName);
 
-    final newName = await showDialog<String>(
+    const accent = Color(
+      0xFF2F6FDB,
+    ); // mismo azul de ExposureCard/UvChartPainter
+
+    final result = await showDialog<(String, String)>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Tu nombre'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(hintText: 'Nombre'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text(
+          'Tu nombre',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: firstNameController,
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+              cursorColor: accent,
+              decoration: InputDecoration(
+                hintText: 'Nombre',
+                filled: true,
+                fillColor: accent.withValues(alpha: 0.06),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: accent, width: 1.5),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: lastNameController,
+              textCapitalization: TextCapitalization.words,
+              cursorColor: accent,
+              decoration: InputDecoration(
+                hintText: 'Apellido',
+                filled: true,
+                fillColor: accent.withValues(alpha: 0.06),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: accent, width: 1.5),
+                ),
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey),
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            onPressed: () => Navigator.pop(ctx, (
+              firstNameController.text.trim(),
+              lastNameController.text.trim(),
+            )),
+            style: FilledButton.styleFrom(
+              backgroundColor: accent,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
             child: const Text('Guardar'),
           ),
         ],
       ),
     );
 
-    if (newName == null || newName.isEmpty || newName == profile.name) return;
+    if (result == null) return;
+    final (newFirstName, newLastName) = result;
+    if (newFirstName.isEmpty ||
+        (newFirstName == profile.firstName &&
+            newLastName == profile.lastName)) {
+      return;
+    }
 
     try {
-      await _service.updateProfile(name: newName);
+      await _service.updateProfile(
+        firstName: newFirstName,
+        lastName: newLastName,
+      );
       if (!mounted) return;
-      setState(() => _profile = profile.copyWith(name: newName));
+      setState(
+        () => _profile = profile.copyWith(
+          firstName: newFirstName,
+          lastName: newLastName,
+        ),
+      );
     } catch (e) {
       _snack('No se pudo guardar el nombre.');
     }
@@ -185,9 +267,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final skin = skinTypeById(profile.skinTypeId);
-    final initial = profile.name.isNotEmpty
-        ? profile.name[0].toUpperCase()
-        : '?';
+    final fullName = profile.fullName.trim();
+    final initial = fullName.isNotEmpty ? fullName[0].toUpperCase() : '?';
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -209,7 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 12),
         Center(
           child: Text(
-            profile.name.isEmpty ? 'Sin nombre' : profile.name,
+            fullName.isEmpty ? 'Sin nombre' : fullName,
             style: const TextStyle(
               color: _ink,
               fontSize: 20,
@@ -217,23 +298,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        Center(
-          child: Text(
-            profile.email,
-            style: TextStyle(color: _ink.withValues(alpha: 0.7), fontSize: 13),
-          ),
-        ),
         const SizedBox(height: 24),
-        _Section(
+        ProfileSection(
           children: [
-            _Tile(
+            ProfileTile(
               leading: const Icon(Icons.person_outline, color: _ink),
               title: 'Nombre',
-              value: profile.name.isEmpty ? 'Agregar' : profile.name,
+              value: fullName.isEmpty ? 'Agregar' : fullName,
               onTap: _editName,
             ),
             const Divider(height: 1, indent: 64),
-            _Tile(
+            ProfileTile(
               leading: Container(
                 width: 28,
                 height: 28,
@@ -275,77 +350,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.children});
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(22),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(children: children),
-    );
-  }
-}
-
-class _Tile extends StatelessWidget {
-  const _Tile({
-    required this.leading,
-    required this.title,
-    required this.value,
-    required this.onTap,
-  });
-
-  final Widget leading;
-  final String title, value;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    const ink = Color(0xFF1F2A37);
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            SizedBox(width: 32, child: Center(child: leading)),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: ink.withValues(alpha: 0.65),
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      color: ink,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right, color: ink.withValues(alpha: 0.5)),
-          ],
-        ),
-      ),
     );
   }
 }

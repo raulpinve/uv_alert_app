@@ -5,21 +5,56 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class UserProfile {
-  UserProfile({required this.name, required this.email, this.skinTypeId});
+  UserProfile({
+    required this.id,
+    required this.firebaseUid,
+    required this.firstName,
+    required this.lastName,
+    this.registeredAt,
+    this.skinTypeId,
+  });
 
-  final String name;
-  final String email;
+  final int id;
+  final String firebaseUid;
+  final String firstName;
+  final String lastName;
+  final DateTime? registeredAt;
   final int? skinTypeId;
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
-    name: json['name'] as String? ?? '',
-    email: json['email'] as String? ?? '',
-    skinTypeId: json['skinTypeId'] as int?,
-  );
+  String get fullName => '$firstName $lastName';
 
-  UserProfile copyWith({String? name, int? skinTypeId}) => UserProfile(
-    name: name ?? this.name,
-    email: email,
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      id: json['id'] as int,
+      firebaseUid: json['firebaseUid'] as String? ?? '',
+      firstName: json['firstName'] as String? ?? '',
+      lastName: json['lastName'] as String? ?? '',
+      registeredAt: json['registeredAt'] != null
+          ? DateTime.tryParse(json['registeredAt'] as String)
+          : null,
+      skinTypeId: json['skinType'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'firebaseUid': firebaseUid,
+    'firstName': firstName,
+    'lastName': lastName,
+    'registeredAt': registeredAt?.toIso8601String(),
+    'skinType': skinTypeId,
+  };
+
+  UserProfile copyWith({
+    String? firstName,
+    String? lastName,
+    int? skinTypeId,
+  }) => UserProfile(
+    id: id,
+    firebaseUid: firebaseUid,
+    firstName: firstName ?? this.firstName,
+    lastName: lastName ?? this.lastName,
+    registeredAt: registeredAt,
     skinTypeId: skinTypeId ?? this.skinTypeId,
   );
 }
@@ -52,10 +87,15 @@ class UserService {
   }
 
   /// Envía solo los campos que cambian.
-  Future<void> updateProfile({String? name, int? skinTypeId}) async {
+  Future<void> updateProfile({
+    String? firstName,
+    String? lastName,
+    int? skinTypeId,
+  }) async {
     final body = <String, dynamic>{
-      if (name != null) 'name': name,
-      if (skinTypeId != null) 'skinTypeId': skinTypeId,
+      if (firstName != null) 'firstName': firstName,
+      if (lastName != null) 'lastName': lastName,
+      if (skinTypeId != null) 'skinType': skinTypeId,
     };
     final res = await http.patch(
       Uri.parse('$baseUrl/users/me'),
