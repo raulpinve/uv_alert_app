@@ -1,4 +1,3 @@
-// lib/features/profile/presentation/screens/profile_screen.dart
 import 'package:app/features/profile/data/models/user_profile.dart';
 import 'package:app/features/profile/data/services/user_service.dart';
 import 'package:app/features/profile/data/skin_type.dart';
@@ -351,18 +350,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
         const SizedBox(height: 24),
-        OutlinedButton.icon(
-          onPressed: _signOut,
-          icon: const Icon(Icons.logout),
-          label: const Text('Cerrar sesión'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: const Color(0xFFA92B2B),
-            minimumSize: const Size.fromHeight(50),
-            side: BorderSide(
-              color: const Color(0xFFA92B2B).withValues(alpha: 0.5),
-            ),
-            shape: RoundedRectangleBorder(
+        SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: Material(
+            color: Colors.white.withValues(alpha: 0.75),
+            borderRadius: BorderRadius.circular(16),
+            child: InkWell(
               borderRadius: BorderRadius.circular(16),
+              onTap: _signOut,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.logout, color: Color(0xFFA92B2B), size: 20),
+                    SizedBox(width: 10),
+                    Text(
+                      'Cerrar sesión',
+                      style: TextStyle(
+                        color: Color(0xFFA92B2B),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
