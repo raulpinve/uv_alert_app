@@ -159,12 +159,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         lastName: newLastName,
       );
       if (!mounted) return;
-      setState(
-        () => _profile = profile.copyWith(
+      setState(() {
+        _profile = profile.copyWith(
           firstName: newFirstName,
           lastName: newLastName,
-        ),
-      );
+        );
+        _changed = true;
+      });
     } catch (e) {
       _snack('No se pudo guardar el nombre.');
     }
