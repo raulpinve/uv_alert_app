@@ -1,4 +1,5 @@
 import 'package:app/features/device/data/device_service.dart';
+import 'package:app/features/auth/data/user_service.dart'; // nuevo import
 import 'package:app/core/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +13,8 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  Future<void> registrarDispositivoActual() => _registrarDispositivoSeguro();
+  // Renombrado: ahora sincroniza usuario Y dispositivo, en ese orden.
+  Future<void> sincronizarSesionActual() => _sincronizarUsuarioYDispositivo();
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
@@ -28,7 +30,7 @@ class AuthService {
       );
 
       return await _auth.signInWithCredential(credential);
-      // Ya no llama a _registrarDispositivoSeguro() acá — lo hace el AuthGate
+      // El AuthGate se encarga de sincronizar usuario y dispositivo
     } on FirebaseAuthException catch (e) {
       debugPrint('Error de FirebaseAuth: ${e.message}');
       rethrow;
@@ -43,8 +45,6 @@ class AuthService {
       password: password,
     );
 
-    await _registrarDispositivoSeguro();
-
     return credential;
   }
 
@@ -57,7 +57,8 @@ class AuthService {
       password: password,
     );
 
-    await _registrarDispositivoSeguro();
+    // El AuthGate se encarga de sincronizar usuario y dispositivo
+    // (se quita la llamada directa de acá para no duplicar el flujo)
 
     return credential;
   }
@@ -77,10 +78,19 @@ class AuthService {
     await _auth.signOut();
   }
 
-  /// Registra el dispositivo sin bloquear ni romper el flujo de login
-  /// si algo falla (token, permisos de ubicación, red, etc).
-  Future<void> _registrarDispositivoSeguro() async {
-    debugPrint('[${DateTime.now()}] INICIO registro dispositivo');
+  /// Sincroniza el usuario en el backend y, si tiene éxito, registra
+  /// el dispositivo. No bloquea ni rompe el flujo de login si algo falla.
+  Future<void> _sincronizarUsuarioYDispositivo() async {
+    try {
+      await UserService().sincronizarUsuario();
+    } catch (e) {
+      debugPrint('[${DateTime.now()}] ERROR sincronizando usuario: $e');
+      // Si el usuario no se pudo sincronizar, el registro de dispositivo
+      // fallará igual (depende de que el usuario ya exista), así que no
+      // tiene sentido intentarlo.
+      return;
+    }
+
     try {
       final fcmToken = await NotificationService.instance.getToken();
 
@@ -96,12 +106,8 @@ class AuthService {
         latitud: position?.latitude ?? 0.0,
         longitud: position?.longitude ?? 0.0,
       );
-
-      debugPrint('[${DateTime.now()}] FIN registro dispositivo');
     } catch (e) {
-      debugPrint(
-        '[${DateTime.now()}] ERROR registro dispositivo: $e',
-      ); // también con timestamp
+      debugPrint('[${DateTime.now()}] ERROR registro dispositivo: $e');
     }
   }
 

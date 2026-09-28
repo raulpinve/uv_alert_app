@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app/features/device/data/device_service.dart';
 import 'package:app/features/profile/data/models/user_profile.dart';
 import 'package:app/features/profile/data/services/user_service.dart';
 import 'package:app/features/profile/data/models/skin_type.dart';
@@ -105,6 +106,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
+    await DeviceService().desregistrarDispositivo();
+
     if (!mounted) return;
     // AuthGate mostrará el login; cerramos las pantallas apiladas.
     Navigator.of(context).popUntil((r) => r.isFirst);

@@ -21,7 +21,7 @@ class _AuthGateState extends State<AuthGate> {
   Future<void> _ensureDeviceRegistered(String uid) {
     if (_uidEnProceso != uid) {
       _uidEnProceso = uid;
-      _deviceRegistrationFuture = _authService.registrarDispositivoActual();
+      _deviceRegistrationFuture = _authService.sincronizarSesionActual();
     }
     return _deviceRegistrationFuture!;
   }
