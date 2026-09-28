@@ -1,4 +1,4 @@
-import 'package:app/features/profile/data/skin_type.dart';
+import 'package:app/features/profile/data/models/skin_type.dart';
 import 'package:flutter/material.dart';
 
 /// Tarjeta seleccionable con el círculo de color, nombre y descripción
@@ -18,66 +18,109 @@ class SkinTypeCard extends StatelessWidget {
   final VoidCallback onTap;
 
   static const _ink = Color(0xFF1F2A37);
+  static const _accent = Color(0xFF2F6FDB);
 
   @override
   Widget build(BuildContext context) {
-    final checkColor = type.color.computeLuminance() > 0.5
-        ? Colors.black87
-        : Colors.white;
-
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: width,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: selected ? 0.92 : 0.6),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? _ink : Colors.transparent,
-            width: 2,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutBack,
+        scale: selected ? 1.03 : 1.0,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          width: width,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: selected ? 0.95 : 0.6),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: selected
+                  ? _accent.withValues(alpha: 0.5)
+                  : Colors.transparent,
+              width: 1.5,
+            ),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: _accent.withValues(alpha: 0.2),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ]
+                : null,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: type.color,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: type.color,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                   ),
+                  if (selected)
+                    Positioned(
+                      right: -2,
+                      bottom: -2,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: _accent,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.check,
+                          size: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                 ],
               ),
-              child: selected ? Icon(Icons.check, color: checkColor) : null,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              type.name,
-              style: const TextStyle(
-                color: _ink,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
+              const SizedBox(height: 12),
+              Text(
+                type.name,
+                style: TextStyle(
+                  color: selected ? _accent : _ink,
+                  fontSize: 14,
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w700,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              type.description,
-              style: TextStyle(
-                color: _ink.withValues(alpha: 0.7),
-                fontSize: 12,
-                height: 1.3,
+              const SizedBox(height: 3),
+              SizedBox(
+                height: 32, // reserva espacio fijo para 2 líneas
+                child: Text(
+                  type.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: _ink.withValues(alpha: 0.65),
+                    fontSize: 12,
+                    height: 1.35,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

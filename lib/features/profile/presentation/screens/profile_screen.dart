@@ -1,6 +1,6 @@
 import 'package:app/features/profile/data/models/user_profile.dart';
 import 'package:app/features/profile/data/services/user_service.dart';
-import 'package:app/features/profile/data/skin_type.dart';
+import 'package:app/features/profile/data/models/skin_type.dart';
 import 'package:app/features/profile/presentation/screens/skin_type_picker_screen.dart';
 import 'package:app/features/profile/presentation/widgets/profile_section.dart';
 import 'package:app/features/profile/presentation/widgets/profile_tile.dart';

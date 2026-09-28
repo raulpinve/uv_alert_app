@@ -1,4 +1,4 @@
-import 'package:app/features/profile/data/skin_type.dart';
+import 'package:app/features/profile/data/models/skin_type.dart';
 import 'package:app/features/profile/presentation/logic/skin_quiz.dart';
 import 'package:app/features/profile/presentation/widgets/skin_type_card.dart';
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
@@ -19,7 +19,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
 
   int? _selected;
   int? _suggested;
-  int _step = -1; // -1 = vista de colores, 0.. = pregunta del test
+  int _step = -1;
   int _score = 0;
 
   @override
