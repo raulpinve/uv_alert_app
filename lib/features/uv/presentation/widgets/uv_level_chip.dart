@@ -1,4 +1,3 @@
-// lib/features/uv/presentation/widgets/uv_level_chip.dart
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:flutter/material.dart';
 

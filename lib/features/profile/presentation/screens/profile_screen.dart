@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/features/profile/data/models/user_profile.dart';
 import 'package:app/features/profile/data/services/user_service.dart';
 import 'package:app/features/profile/data/models/skin_type.dart';
@@ -7,6 +9,7 @@ import 'package:app/features/profile/presentation/widgets/profile_tile.dart';
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:app/core/network/api_exception.dart';
 
 /// Hace pop con `true` si el usuario cambió algo que afecta la pantalla UV
 /// (por ejemplo el tipo de piel), para que la pantalla anterior se refresque.
@@ -44,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => _profile = p);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error = e.toString());
+      setState(() => _error = _messageFrom(e, 'No se pudo cargar el perfil.'));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -53,122 +56,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _snack(String msg) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
+  String _messageFrom(Object e, String fallback) {
+    if (e is ApiException) return e.displayMessage;
+    if (e is SocketException) return 'Sin conexión a internet.';
+    return fallback;
+  }
+
   Future<void> _editName() async {
     final profile = _profile!;
-    final firstNameController = TextEditingController(text: profile.firstName);
-    final lastNameController = TextEditingController(text: profile.lastName);
 
-    const accent = Color(
-      0xFF2F6FDB,
-    ); // mismo azul de ExposureCard/UvChartPainter
-
-    final result = await showDialog<(String, String)>(
+    final saved = await showDialog<({String first, String last})>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
-          'Tu nombre',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: firstNameController,
-              autofocus: true,
-              textCapitalization: TextCapitalization.words,
-              cursorColor: accent,
-              decoration: InputDecoration(
-                hintText: 'Nombre',
-                filled: true,
-                fillColor: accent.withValues(alpha: 0.06),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: accent, width: 1.5),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: lastNameController,
-              textCapitalization: TextCapitalization.words,
-              cursorColor: accent,
-              decoration: InputDecoration(
-                hintText: 'Apellido',
-                filled: true,
-                fillColor: accent.withValues(alpha: 0.06),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: accent, width: 1.5),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            style: TextButton.styleFrom(foregroundColor: Colors.grey),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, (
-              firstNameController.text.trim(),
-              lastNameController.text.trim(),
-            )),
-            style: FilledButton.styleFrom(
-              backgroundColor: accent,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
-            child: const Text('Guardar'),
-          ),
-        ],
-      ),
+      builder: (_) => _EditNameDialog(profile: profile, service: _service),
     );
 
-    if (result == null) return;
-    final (newFirstName, newLastName) = result;
-    if (newFirstName.isEmpty ||
-        (newFirstName == profile.firstName &&
-            newLastName == profile.lastName)) {
-      return;
-    }
-
-    try {
-      await _service.updateProfile(
-        firstName: newFirstName,
-        lastName: newLastName,
-      );
-      if (!mounted) return;
-      setState(() {
-        _profile = profile.copyWith(
-          firstName: newFirstName,
-          lastName: newLastName,
-        );
-        _changed = true;
-      });
-    } catch (e) {
-      _snack('No se pudo guardar el nombre.');
-    }
+    if (saved == null || !mounted) return;
+    setState(() {
+      _profile = profile.copyWith(firstName: saved.first, lastName: saved.last);
+      _changed = true;
+    });
   }
 
   Future<void> _editSkinType() async {
@@ -192,7 +98,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _changed = true;
       });
     } catch (e) {
-      _snack('No se pudo guardar el tipo de piel.');
+      if (!mounted) return;
+      _snack(_messageFrom(e, 'No se pudo guardar el tipo de piel.'));
     }
   }
 
@@ -380,6 +287,150 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EditNameDialog extends StatefulWidget {
+  const _EditNameDialog({required this.profile, required this.service});
+
+  final UserProfile profile;
+  final UserService service;
+
+  @override
+  State<_EditNameDialog> createState() => _EditNameDialogState();
+}
+
+class _EditNameDialogState extends State<_EditNameDialog> {
+  static const _accent = Color(0xFF2F6FDB);
+
+  late final TextEditingController _firstCtrl;
+  late final TextEditingController _lastCtrl;
+  Map<String, String> _errors = {};
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _firstCtrl = TextEditingController(text: widget.profile.firstName);
+    _lastCtrl = TextEditingController(text: widget.profile.lastName);
+  }
+
+  @override
+  void dispose() {
+    _firstCtrl.dispose();
+    _lastCtrl.dispose();
+    super.dispose();
+  }
+
+  InputDecoration _dec(String hint, String? errorText) => InputDecoration(
+    hintText: hint,
+    errorText: errorText,
+    filled: true,
+    fillColor: _accent.withValues(alpha: 0.06),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: _accent, width: 1.5),
+    ),
+  );
+
+  void _snack(String msg) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+
+  Future<void> _submit() async {
+    final first = _firstCtrl.text.trim();
+    final last = _lastCtrl.text.trim();
+
+    if (first == widget.profile.firstName && last == widget.profile.lastName) {
+      Navigator.pop(context);
+      return;
+    }
+
+    setState(() {
+      _saving = true;
+      _errors = {};
+    });
+
+    try {
+      await widget.service.updateProfile(firstName: first, lastName: last);
+      if (mounted) Navigator.pop(context, (first: first, last: last));
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _errors = e.fieldErrorMap;
+      });
+      if (e.fieldErrors.isEmpty) _snack(e.message);
+    } on SocketException {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      _snack('Sin conexión a internet.');
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      _snack('No se pudo guardar el nombre.');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      title: const Text(
+        'Tu nombre',
+        style: TextStyle(fontWeight: FontWeight.w700),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _firstCtrl,
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+            cursorColor: _accent,
+            decoration: _dec('Nombre', _errors['firstName']),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _lastCtrl,
+            textCapitalization: TextCapitalization.words,
+            cursorColor: _accent,
+            decoration: _dec('Apellido', _errors['lastName']),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          style: TextButton.styleFrom(foregroundColor: Colors.grey),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: _saving ? null : _submit,
+          style: FilledButton.styleFrom(
+            backgroundColor: _accent,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          child: _saving
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Text('Guardar'),
         ),
       ],
     );
