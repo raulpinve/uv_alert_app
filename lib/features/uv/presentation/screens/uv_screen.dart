@@ -1,6 +1,7 @@
-import 'dart:async';
 import 'dart:io';
+import 'dart:async';
 
+import 'package:app/features/uv/presentation/widgets/cloud_reduction_chip.dart';
 import 'package:app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:app/features/uv/data/uv.dart';
 import 'package:app/features/uv/data/uv_service.dart';
@@ -145,6 +146,15 @@ class _UvScreenState extends State<UvScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      Center(
+                        child: CloudReductionChip(
+                          uv: uv,
+                          uvClearSky: data.current.uvClearSky,
+                          fg: fg,
+                          dark: dark,
+                        ),
+                      ),
                       const SizedBox(height: 20),
                       RecommendationCard(
                         data: data,
@@ -152,6 +162,7 @@ class _UvScreenState extends State<UvScreen> {
                         fg: fg,
                         bg: cardColor,
                       ),
+
                       if (data.exposure != null) ...[
                         const SizedBox(height: 12),
                         ExposureCard(data: data, uv: uv, fg: fg, bg: cardColor),
