@@ -42,11 +42,18 @@ class UvHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const diasCortos = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
     final t = data.current.dateTime;
     final hh = t.hour.toString().padLeft(2, '0');
     final mm = t.minute.toString().padLeft(2, '0');
+    final diff = DateTime.now().difference(t).inMinutes;
+    final actualizado = diff < 60
+        ? 'Actualizado hace $diff min'
+        : 'Datos de las $hh:$mm';
+
     final fecha =
-        '${_dias[t.weekday - 1]} ${t.day} de ${_meses[t.month - 1]} · $hh:$mm';
+        '${diasCortos[t.weekday - 1]} ${t.day}/${t.month} · $actualizado';
     final box = Colors.white.withValues(alpha: dark ? 0.15 : 0.55);
 
     return Row(
