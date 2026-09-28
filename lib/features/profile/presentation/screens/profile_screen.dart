@@ -165,29 +165,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _errorState() {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 320),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.65),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.cloud_off_rounded,
+                  size: 32,
+                  color: _ink,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'No pudimos cargar tu perfil',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: _ink,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _error ?? 'Intenta de nuevo en unos segundos.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: _ink.withValues(alpha: 0.7),
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 28),
+              FilledButton.icon(
+                onPressed: _load,
+                icon: const Icon(Icons.refresh_rounded, size: 20),
+                label: const Text('Reintentar'),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52),
+                  backgroundColor: const Color(0xFF2F6FDB),
+                  foregroundColor: Colors.white,
+                  textStyle: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: _signOut,
+                icon: const Icon(Icons.logout, size: 18),
+                label: const Text('Cerrar sesión'),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                  foregroundColor: _ink.withValues(alpha: 0.75),
+                  textStyle: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _body() {
     final profile = _profile;
 
     if (profile == null) {
-      return Center(
-        child: _loading
-            ? const CircularProgressIndicator()
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _error ?? 'Sin datos',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: _ink),
-                  ),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: _load,
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              ),
-      );
+      return _loading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorState();
     }
 
     final skin = skinTypeById(profile.skinTypeId);
