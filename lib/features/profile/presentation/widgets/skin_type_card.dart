@@ -1,4 +1,3 @@
-// lib/features/profile/presentation/widgets/skin_type_card.dart
 import 'package:app/features/profile/data/skin_type.dart';
 import 'package:flutter/material.dart';
 

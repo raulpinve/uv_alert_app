@@ -1,5 +1,3 @@
-// lib/features/profile/presentation/logic/skin_quiz.dart
-
 /// Preguntas del test rápido para sugerir un tipo de piel.
 /// Cada opción suma su índice. Total posible: 0–11.
 class SkinQuizQuestion {

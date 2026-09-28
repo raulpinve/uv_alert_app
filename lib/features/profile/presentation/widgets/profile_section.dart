@@ -1,4 +1,3 @@
-// lib/features/profile/presentation/widgets/profile_section.dart
 import 'package:flutter/material.dart';
 
 /// Contenedor con fondo blanco translúcido y bordes redondeados

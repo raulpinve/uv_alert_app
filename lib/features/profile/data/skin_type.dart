@@ -1,4 +1,3 @@
-// lib/features/profile/data/skin_type.dart
 import 'package:flutter/material.dart';
 
 // Los ids (1–6) son SUPUESTOS: deben coincidir con los skinTypeId del backend.

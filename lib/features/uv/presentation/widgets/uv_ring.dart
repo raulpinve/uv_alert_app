@@ -1,4 +1,3 @@
-// lib/features/uv/presentation/widgets/uv_ring.dart
 import 'dart:math' as math;
 
 import 'package:app/features/uv/presentation/logic/uv_level.dart';

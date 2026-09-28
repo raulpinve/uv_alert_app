@@ -1,4 +1,3 @@
-// lib/features/profile/presentation/widgets/profile_tile.dart
 import 'package:flutter/material.dart';
 
 /// Fila estilo "ajustes": icono/avatar a la izquierda, título + valor

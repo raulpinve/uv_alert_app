@@ -1,4 +1,3 @@
-// lib/features/uv/presentation/widgets/exposure_card.dart
 import 'package:app/features/uv/data/uv.dart';
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:app/features/uv/presentation/widgets/info_card.dart';

@@ -1,4 +1,3 @@
-// lib/features/uv/presentation/logic/uv_level.dart
 import 'package:flutter/material.dart';
 
 // ───────────────────────── Niveles y colores ─────────────────────────

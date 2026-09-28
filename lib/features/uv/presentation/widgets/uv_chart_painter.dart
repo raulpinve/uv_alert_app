@@ -1,4 +1,3 @@
-// lib/features/uv/presentation/widgets/uv_chart_painter.dart
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';

@@ -1,6 +1,3 @@
-// lib/models/uv.dart
-// Si ya tienes tu propio modelo, solo asegúrate de exponer estos mismos campos.
-
 double _d(dynamic v) => (v as num?)?.toDouble() ?? 0;
 
 class UvResponse {
