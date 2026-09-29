@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
 class FieldError {
   final String field;
   final String message;
@@ -16,6 +20,46 @@ class ApiException implements Exception {
     this.type,
     this.fieldErrors = const [],
   });
+
+  /// Construye la excepción a partir de una respuesta HTTP del backend,
+  /// cuyo shape de error es:
+  /// { statusCode, message, error, errors?: [{ field, message }] }
+  factory ApiException.fromResponse(http.Response response) {
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+
+      final message =
+          body['message'] as String? ??
+          'Error desconocido (${response.statusCode})';
+      final type = body['error'] as String?;
+
+      final rawErrors = body['errors'] as List<dynamic>?;
+      final fieldErrors = rawErrors == null
+          ? const <FieldError>[]
+          : rawErrors
+                .map(
+                  (e) => FieldError(
+                    (e as Map<String, dynamic>)['field'] as String? ?? '',
+                    e['message'] as String? ?? '',
+                  ),
+                )
+                .toList();
+
+      return ApiException(
+        response.statusCode,
+        message,
+        type: type,
+        fieldErrors: fieldErrors,
+      );
+    } catch (_) {
+      // El body no es el JSON esperado (ej. 404 HTML de Express cuando
+      // la ruta no existe, o un proxy/gateway devolviendo texto plano).
+      return ApiException(
+        response.statusCode,
+        'Error del servidor (status ${response.statusCode})',
+      );
+    }
+  }
 
   bool get isUnauthorized => statusCode == 401;
   bool get isForbidden => statusCode == 403;

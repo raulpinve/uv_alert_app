@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app/core/config/api_config.dart';
+import 'package:app/core/network/api_exception.dart';
 import 'package:app/features/uv/data/uv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/rendering.dart';
@@ -29,9 +30,7 @@ class UvService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-        'Error al obtener datos UV (status ${response.statusCode})',
-      );
+      throw ApiException.fromResponse(response);
     }
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;

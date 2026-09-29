@@ -1,4 +1,5 @@
 import 'package:app/core/config/api_config.dart';
+import 'package:app/core/network/api_exception.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,11 +26,7 @@ class UserService {
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception(
-        'Error al sincronizar usuario '
-        '(status ${response.statusCode}): ${response.body}',
-      );
+      throw ApiException.fromResponse(response);
     }
   }
 }
-

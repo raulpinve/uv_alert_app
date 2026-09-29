@@ -29,7 +29,7 @@ class _AuthGateState extends State<AuthGate> {
 
   void _reintentar(String uid) {
     setState(() {
-      _uidEnProceso = null; // fuerza a _ensureDeviceRegistered a relanzar
+      _uidEnProceso = null;
     });
   }
 
