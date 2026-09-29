@@ -38,8 +38,8 @@ class _Keyframe {
 }
 
 const _keyframes = <_Keyframe>[
-  // Noche / sin UV
-  _Keyframe(0, Color(0xFF0B1B3A), Color(0xFF1B2F5E), Color(0xFF3A4A7A)),
+  // Nublado / UV ~0 de día
+  _Keyframe(0, Color(0xFF8FA3B8), Color(0xFFB4C3D1), Color(0xFFD5DEE6)),
   // Bajo: cielo azul
   _Keyframe(2, Color(0xFF5AA9E6), Color(0xFF9CCBEF), Color(0xFFD6ECF7)),
   // Moderado: amarillo

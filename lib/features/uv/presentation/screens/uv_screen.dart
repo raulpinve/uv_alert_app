@@ -16,6 +16,7 @@ import 'package:app/features/uv/presentation/widgets/uv_level_chip.dart';
 import 'package:app/features/uv/presentation/widgets/uv_ring.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:app/core/theme/sky_theme.dart';
 import 'package:http/http.dart' as http;
 
 class UvScreen extends StatefulWidget {
@@ -31,6 +32,7 @@ class _UvScreenState extends State<UvScreen> {
   bool _loading = true;
   String? _error;
   bool _accountMissing = false;
+  double _night = nightFactor();
 
   @override
   void initState() {
@@ -54,6 +56,7 @@ class _UvScreenState extends State<UvScreen> {
       setState(() {
         _data = res.data;
         _accountMissing = false;
+        _night = res.data?.nightFactorForCity ?? nightFactor();
       });
     } on ApiException catch (e) {
       if (e.isNotFound) {
@@ -114,17 +117,16 @@ class _UvScreenState extends State<UvScreen> {
   Widget build(BuildContext context) {
     final data = _data;
     final uv = data?.current.uv ?? 0;
-    final dark = uv < 1; // fondo nocturno → texto claro
-    final fg = dark ? Colors.white : const Color(0xFF1F2A37);
-    final cardColor = dark
-        ? Colors.white.withValues(alpha: 0.12)
-        : Colors.white.withValues(alpha: 0.72);
+    final sky = SkyTheme.from(uv: uv, night: _night);
+    final fg = sky.fg;
+    final cardColor = sky.cardColor;
+    final dark = sky.dark;
 
     return Scaffold(
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 900),
         curve: Curves.easeInOut,
-        decoration: BoxDecoration(gradient: gradientForUv(uv)),
+        decoration: BoxDecoration(gradient: sky.gradient),
         child: SafeArea(
           child: data == null
               ? Center(
