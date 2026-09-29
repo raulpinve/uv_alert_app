@@ -3,6 +3,32 @@ import 'dart:math' as math;
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:flutter/material.dart';
 
+/// Puntos de control (uv, progreso del anillo 0..1).
+/// Deben ser crecientes en ambos valores.
+const _uvStops = <(double, double)>[
+  (0.0, 0.00),
+  (3.0, 0.25), // Moderado
+  (6.0, 0.50), // Alto
+  (8.0, 0.68), // Muy alto
+  (11.0, 0.85), // Extremo
+  (14.0, 1.00), // Extremo alto: anillo lleno
+];
+
+/// Convierte el UV en progreso del anillo (0..1) de forma no lineal.
+double uvRingProgress(double uv) {
+  if (uv <= _uvStops.first.$1) return 0.0;
+  if (uv >= _uvStops.last.$1) return 1.0;
+
+  for (var i = 0; i < _uvStops.length - 1; i++) {
+    final (x0, y0) = _uvStops[i];
+    final (x1, y1) = _uvStops[i + 1];
+    if (uv <= x1) {
+      return y0 + (uv - x0) / (x1 - x0) * (y1 - y0);
+    }
+  }
+  return 1.0;
+}
+
 class UvRing extends StatelessWidget {
   const UvRing({
     super.key,
@@ -28,7 +54,7 @@ class UvRing extends StatelessWidget {
           height: 250,
           child: CustomPaint(
             painter: _RingPainter(
-              progress: (value / 11).clamp(0.0, 1.0),
+              progress: uvRingProgress(value),
               color: dark ? Colors.white70 : level.color,
               rayColor: fg.withValues(alpha: 0.5),
               fill: Colors.white.withValues(alpha: dark ? 0.08 : 0.3),
