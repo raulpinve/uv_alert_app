@@ -1,21 +1,24 @@
-import 'package:app/features/profile/data/models/skin_type.dart';
-import 'package:app/features/profile/presentation/logic/skin_quiz.dart';
 import 'package:app/features/profile/presentation/widgets/skin_type_card.dart';
+import 'package:app/features/profile/presentation/logic/skin_quiz.dart';
 import 'package:app/features/uv/presentation/logic/uv_level.dart';
+import 'package:app/features/profile/data/models/skin_type.dart';
+import 'package:app/core/theme/sky_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Devuelve el id del tipo de piel elegido con Navigator.pop, o null si se cancela.
 class SkinTypePickerScreen extends StatefulWidget {
-  const SkinTypePickerScreen({super.key, this.initialId});
+  const SkinTypePickerScreen({super.key, this.initialId, required this.sky});
 
   final int? initialId;
+  final SkyTheme sky;
 
   @override
   State<SkinTypePickerScreen> createState() => _SkinTypePickerScreenState();
 }
 
 class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
-  static const _ink = Color(0xFF1F2A37);
+  Color get _ink => widget.sky.fg;
+  Color get _card => widget.sky.cardColor;
 
   int? _selected;
   int? _suggested;
@@ -52,7 +55,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
     final inQuiz = _step >= 0;
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(gradient: gradientForUv(2)),
+        decoration: BoxDecoration(gradient: widget.sky.gradient),
         child: SafeArea(
           child: Column(
             children: [
@@ -70,11 +73,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
                           color: Colors.white.withValues(alpha: 0.55),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: _ink,
-                          size: 20,
-                        ),
+                        child: Icon(Icons.arrow_back, color: _ink, size: 20),
                       ),
                     ),
                   ],
@@ -105,7 +104,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
             children: [
-              const Text(
+              Text(
                 '¿Cuál se parece más a tu piel?',
                 style: TextStyle(
                   color: _ink,
@@ -143,7 +142,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
                         child: Text(
                           'Según tus respuestas, podría ser "${suggested.name}". '
                           'Puedes cambiarlo si no te identificas.',
-                          style: const TextStyle(color: _ink, fontSize: 13),
+                          style: TextStyle(color: _ink, fontSize: 13),
                         ),
                       ),
                     ],
@@ -169,6 +168,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
               Center(
                 child: TextButton.icon(
                   onPressed: _startQuiz,
+                  style: TextButton.styleFrom(foregroundColor: _ink),
                   icon: const Icon(Icons.help_outline, size: 18),
                   label: const Text('No estoy seguro, hacer test rápido'),
                 ),
@@ -217,7 +217,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
         const SizedBox(height: 24),
         Text(
           q.text,
-          style: const TextStyle(
+          style: TextStyle(
             color: _ink,
             fontSize: 22,
             fontWeight: FontWeight.w700,
@@ -237,7 +237,7 @@ class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     q.options[i],
-                    style: const TextStyle(color: _ink, fontSize: 15),
+                    style: TextStyle(color: _ink, fontSize: 15),
                   ),
                 ),
               ),

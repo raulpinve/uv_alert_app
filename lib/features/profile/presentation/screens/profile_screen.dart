@@ -11,19 +11,27 @@ import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/network/api_exception.dart';
+import 'package:app/core/theme/sky_theme.dart';
 
 /// Hace pop con `true` si el usuario cambió algo que afecta la pantalla UV
 /// (por ejemplo el tipo de piel), para que la pantalla anterior se refresque.
 /// Requiere Flutter 3.22+ (PopScope con onPopInvokedWithResult).
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, required this.sky});
+  final SkyTheme sky;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const _ink = Color(0xFF1F2A37);
+  Color get _ink => widget.sky.fg;
+  Color get _card => widget.sky.cardColor;
+  Color get _danger => Color.lerp(
+    const Color(0xFFA92B2B),
+    const Color(0xFFFF8A80),
+    widget.sky.night,
+  )!;
 
   final _service = UserService();
   UserProfile? _profile;
@@ -83,7 +91,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final id = await Navigator.push<int>(
       context,
       MaterialPageRoute(
-        builder: (_) => SkinTypePickerScreen(initialId: profile.skinTypeId),
+        builder: (_) => SkinTypePickerScreen(
+          initialId: profile.skinTypeId,
+          sky: widget.sky,
+        ),
       ),
     );
 
@@ -140,15 +151,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: Colors.white.withValues(alpha: 0.55),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: _ink,
-                            size: 20,
-                          ),
+                          child: Icon(Icons.arrow_back, color: _ink, size: 20),
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Text(
+                      Text(
                         'Perfil',
                         style: TextStyle(
                           color: _ink,
@@ -184,14 +191,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.white.withValues(alpha: 0.65),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.cloud_off_rounded,
-                  size: 32,
-                  color: _ink,
-                ),
+                child: Icon(Icons.cloud_off_rounded, size: 32, color: _ink),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'No pudimos cargar tu perfil',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -271,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             backgroundColor: Colors.white.withValues(alpha: 0.65),
             child: Text(
               initial,
-              style: const TextStyle(
+              style: TextStyle(
                 color: _ink,
                 fontSize: 34,
                 fontWeight: FontWeight.w600,
@@ -283,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Center(
           child: Text(
             fullName.isEmpty ? 'Sin nombre' : fullName,
-            style: const TextStyle(
+            style: TextStyle(
               color: _ink,
               fontSize: 20,
               fontWeight: FontWeight.w700,
@@ -294,7 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ProfileSection(
           children: [
             ProfileTile(
-              leading: const Icon(Icons.person_outline, color: _ink),
+              leading: Icon(Icons.person_outline, color: _ink),
               title: 'Nombre',
               value: fullName.isEmpty ? 'Agregar' : fullName,
               onTap: _editName,
@@ -316,7 +319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 child: skin == null
-                    ? const Icon(Icons.help_outline, size: 16, color: _ink)
+                    ? Icon(Icons.help_outline, size: 16, color: _ink)
                     : null,
               ),
               title: 'Tipo de piel',

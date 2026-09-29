@@ -7,7 +7,6 @@ import 'package:app/features/uv/presentation/widgets/cloud_reduction_chip.dart';
 import 'package:app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:app/features/uv/data/uv.dart';
 import 'package:app/features/uv/data/uv_service.dart';
-import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:app/features/uv/presentation/widgets/exposure_card.dart';
 import 'package:app/features/uv/presentation/widgets/forecast_section.dart';
 import 'package:app/features/uv/presentation/widgets/recommendation_card.dart';
@@ -175,7 +174,7 @@ class _UvScreenState extends State<UvScreen> {
                           final changed = await Navigator.push<bool>(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const ProfileScreen(),
+                              builder: (_) => ProfileScreen(sky: sky),
                             ),
                           );
                           if (changed == true) {
