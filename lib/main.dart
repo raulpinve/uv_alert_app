@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Uv alert',
+      title: 'Zenit UV',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
