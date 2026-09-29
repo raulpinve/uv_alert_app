@@ -1,6 +1,5 @@
 import 'package:app/features/profile/presentation/widgets/skin_type_card.dart';
 import 'package:app/features/profile/presentation/logic/skin_quiz.dart';
-import 'package:app/features/uv/presentation/logic/uv_level.dart';
 import 'package:app/features/profile/data/models/skin_type.dart';
 import 'package:app/core/theme/sky_theme.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +17,6 @@ class SkinTypePickerScreen extends StatefulWidget {
 
 class _SkinTypePickerScreenState extends State<SkinTypePickerScreen> {
   Color get _ink => widget.sky.fg;
-  Color get _card => widget.sky.cardColor;
 
   int? _selected;
   int? _suggested;

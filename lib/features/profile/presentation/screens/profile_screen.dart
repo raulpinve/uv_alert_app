@@ -26,12 +26,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Color get _ink => widget.sky.fg;
-  Color get _card => widget.sky.cardColor;
-  Color get _danger => Color.lerp(
-    const Color(0xFFA92B2B),
-    const Color(0xFFFF8A80),
-    widget.sky.night,
-  )!;
 
   final _service = UserService();
   UserProfile? _profile;

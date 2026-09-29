@@ -2,30 +2,6 @@
 import 'package:app/features/uv/data/uv.dart';
 import 'package:flutter/material.dart';
 
-const _dias = [
-  'lunes',
-  'martes',
-  'miércoles',
-  'jueves',
-  'viernes',
-  'sábado',
-  'domingo',
-];
-const _meses = [
-  'ene',
-  'feb',
-  'mar',
-  'abr',
-  'may',
-  'jun',
-  'jul',
-  'ago',
-  'sept',
-  'oct',
-  'nov',
-  'dic',
-];
-
 class UvHeader extends StatelessWidget {
   const UvHeader({
     super.key,
