@@ -1,3 +1,4 @@
+import 'package:app/core/errors/firebase_auth_errors.dart';
 import 'package:app/features/auth/data/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,24 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  String _mapFirebaseError(String code) {
-    switch (code) {
-      case 'invalid-email':
-        return 'El correo no es válido.';
-      case 'user-not-found':
-        return 'No existe una cuenta con ese correo.';
-      case 'wrong-password':
-      case 'invalid-credential':
-        return 'Correo o contraseña incorrectos.';
-      case 'email-already-in-use':
-        return 'Ya existe una cuenta con ese correo.';
-      case 'weak-password':
-        return 'La contraseña es muy débil (mínimo 6 caracteres).';
-      default:
-        return 'Ocurrió un error. Intenta de nuevo.';
-    }
-  }
-
   Future<void> _handleEmailAuth() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -63,7 +46,12 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       debugPrint(e.toString());
       if (mounted) {
-        _showError(_mapFirebaseError(e.code));
+        _showError(mensajeFirebaseAuth(e));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      if (mounted) {
+        _showError('Ocurrió un error. Intenta de nuevo.');
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -74,9 +62,17 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
     try {
       await _authService.signInWithGoogle();
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.toString());
       if (mounted) {
-        _showError('Error al iniciar sesión: $e');
+        _showError(mensajeFirebaseAuth(e));
+      }
+    } catch (e) {
+      // Errores que no vienen de Firebase (ej. PlatformException del
+      // paquete google_sign_in, problemas de Play Services, etc.)
+      debugPrint(e.toString());
+      if (mounted) {
+        _showError('No se pudo iniciar sesión con Google. Intenta de nuevo.');
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
