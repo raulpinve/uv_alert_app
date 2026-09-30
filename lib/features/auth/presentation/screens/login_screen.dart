@@ -145,26 +145,26 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         Container(
-          width: 72,
-          height: 72,
+          width: 88,
+          height: 88,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const RadialGradient(
-              colors: [Color(0xFFFFC107), Color(0xFFFF9800)],
-            ),
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.orange.withValues(alpha: 0.4),
-                blurRadius: 30,
-                spreadRadius: 4,
+                color: const Color(0xFF0B3A8A).withValues(alpha: 0.35),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: const Icon(Icons.wb_sunny, color: Colors.white, size: 34),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Image.asset('assets/icon/logo.png', fit: BoxFit.cover),
+          ),
         ),
         const SizedBox(height: 16),
         const Text(
-          'UV Alert',
+          'Zenit UV',
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
