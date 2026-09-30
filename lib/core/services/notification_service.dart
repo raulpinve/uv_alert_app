@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
 
 /// Maneja permisos, obtención del token FCM y visualización de
 /// notificaciones locales. FCM no muestra automáticamente una
@@ -32,7 +33,7 @@ class NotificationService {
     // Android 13+; en versiones anteriores de Android no hace nada).
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInit = AndroidInitializationSettings('ic_stat_zenit');
     const iosInit = DarwinInitializationSettings();
     await _localNotifications.initialize(
       settings: const InitializationSettings(
@@ -73,6 +74,8 @@ class NotificationService {
           channelDescription: _channel.description,
           importance: Importance.high,
           priority: Priority.high,
+          icon: 'ic_stat_zenit',
+          color: const Color(0xFF2F8BE6),
         ),
         iOS: const DarwinNotificationDetails(),
       ),

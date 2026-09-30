@@ -5,7 +5,14 @@
     <application
         android:label="Zenit UV"
         android:name="${applicationName}"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_zenit" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/zenit_notification" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
