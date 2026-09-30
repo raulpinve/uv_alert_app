@@ -17,6 +17,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:app/core/theme/sky_theme.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
 
 class UvScreen extends StatefulWidget {
   const UvScreen({super.key});
@@ -39,13 +40,26 @@ class _UvScreenState extends State<UvScreen> {
     _load();
   }
 
+  Future<String?> _getTokenWithRetry() async {
+    for (var i = 0; i < 3; i++) {
+      try {
+        return await FirebaseMessaging.instance.getToken();
+      } on FirebaseException catch (e) {
+        final transient = (e.message ?? '').contains('SERVICE_NOT_AVAILABLE');
+        if (!transient || i == 2) rethrow;
+        await Future.delayed(Duration(seconds: 2 * (i + 1)));
+      }
+    }
+    return null;
+  }
+
   Future<void> _load() async {
     setState(() {
       _loading = true;
       _error = null;
     });
     try {
-      final fcmToken = await FirebaseMessaging.instance.getToken();
+      final fcmToken = await _getTokenWithRetry();
       if (fcmToken == null) {
         throw Exception('No se pudo obtener el token de notificaciones.');
       }
@@ -103,6 +117,11 @@ class _UvScreenState extends State<UvScreen> {
     }
     if (e is TimeoutException) {
       return 'La conexión tardó demasiado. Intenta de nuevo.';
+    }
+    if (e is FirebaseException &&
+        (e.message ?? '').contains('SERVICE_NOT_AVAILABLE')) {
+      return 'No se pudo conectar con Google para las notificaciones. '
+          'Revisa tu conexión e intenta de nuevo.';
     }
     // Mensajes que tú mismo lanzaste con Exception('texto') en UvService
     if (e is Exception) {
